@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copy Numbers Analysis</title>
+</head>
+<body>
+    <!-- A1 -->
+    <div>
+        <h3>A1. How many unique gene/copy-number values are in the file?</h3>
+        <button onclick="fetchA1()">Calculate</button>
+        <div id="resultA1"></div>
+    </div>
+
+    <!-- A2 -->
+    <div>
+        <h3>A2. Compute the mean and standard deviation of copy number for all unique human gene products/proteins</h3>
+        <button onclick="fetchA2()">Calculate</button>
+        <div id="resultA2"></div>
+    </div>
+
+    <!-- A3 -->
+    <div>
+        <h3>A3. Calculate the percentile rank for each gene product/protein</h3>
+        <button onclick="fetchA3()">Calculate</button>
+        <div id="resultA3"></div>
+    </div>
+
+    <script>
+        function fetchA1() {
+            fetch('/a1').then(response => response.json()).then(data => {
+                document.getElementById('resultA1').innerText = `Unique Values: ${data.unique_values}`;
+            });
+        }
+
+        function fetchA2() {
+            fetch('/a2').then(response => response.json()).then(data => {
+                document.getElementById('resultA2').innerText = `Mean: ${data.mean.toFixed(2)}, Standard Deviation: ${data.std_dev.toFixed(2)}`;
+            });
+        }
+
+        function fetchA3() {
+            fetch('/a3').then(response => response.json()).then(data => {
+                let tableHtml = '<table border="1"><tr><th>Gene</th><th>Percentile Rank</th></tr>';
+                data.forEach(item => {
+                    tableHtml += `<tr><td>${item.Gn}</td><td>${item['Percentile Rank'].toFixed(2)}%</td></tr>`;
+                });
+                tableHtml += '</table>';
+                document.getElementById('resultA3').innerHTML = tableHtml;
+            });
+        }
+    </script>
+</body>
+</html>

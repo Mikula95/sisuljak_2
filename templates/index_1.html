@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Questions</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div>
+        <h2>A1. How many unique gene/copy-number values are in the file?</h2>
+        <button onclick="calculateAnswer('A1')">Calculate</button>
+        <p>Answer: <span id="resultA1"></span></p>
+    </div>
+    <div>
+        <h2>A2. Compute the mean and standard deviation of copy number for all unique human gene products/proteins</h2>
+        <button onclick="calculateAnswer('A2')">Calculate</button>
+        <table id="resultA2">
+            <thead>
+                <tr>
+                    <th>Gene</th>
+                    <th>Mean</th>
+                    <th>Standard Deviation</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div>
+        <h2>A3. Calculate the percentile rank (in terms of copy number ranks) for each gene product/protein.</h2>
+        <button onclick="calculateAnswer('A3')">Calculate</button>
+        <table id="resultA3">
+            <thead>
+                <tr>
+                    <th>Gene</th>
+                    <th>Percentile</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <!-- Add divs for other questions in a similar way -->
+
+    <script>
+        function calculateAnswer(question) {
+            $.post(`/calculate/${question}`, function(data) {
+                if (question == 'A1') {
+                    $(`#result${question}`).text(data.result);
+                } else if (question == 'A2' || question == 'A3') {
+                    let table = $(`#result${question} tbody`);
+                    table.empty();
+                    for (let row of data.result) {
+                        let mean = row.mean || 'N/A';
+                        let std = row.std || 'N/A';
+                        let percentile = row.Percentile || 'N/A';
+                        
+                        if (question == 'A2') {
+                            table.append(`<tr><td>${row.Gn}</td><td>${mean}</td><td>${std}</td></tr>`);
+                        } else if (question == 'A3') {
+                            table.append(`<tr><td>${row.Gn}</td><td>${percentile}</td></tr>`);
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
